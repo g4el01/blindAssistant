@@ -150,7 +150,7 @@ document.addEventListener(
         if(key==="a"){
 
             hablar(
-                "Modo entorno"
+                "Modo ayuda para caminar"
             );
 
             await enviar(
@@ -172,7 +172,7 @@ document.addEventListener(
         if(key==="c"){
 
             hablar(
-                "Modo dinero"
+                "Modo contar dinero"
             );
 
             await enviar(
@@ -180,5 +180,26 @@ document.addEventListener(
             );
         }
 
+		if(key==="d"){
+
+            hablar(
+                "Modo descripción de objeto"
+            );
+
+            await enviar(
+                "object"
+            );
+        }
+		
+		if(key==="e"){
+
+            hablar(
+                "Modo clima"
+            );
+
+            await enviar(
+                "weather"
+            );
+        }
     }
 );
