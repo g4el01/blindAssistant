@@ -162,6 +162,58 @@ Sigue estrictamente estas reglas:
     return {
         "result": texto
     }
+
+# =====================================================
+# RECONOCER OBJETOS
+# =====================================================
+
+@app.post("/object")
+
+def money(data: ImageRequest):
+
+    prompt = """
+Actúa como un asistente visual descriptivo para una persona ciega. Analiza la imagen actual y describe los objetos presentes siguiendo estrictamente estas reglas: 
+1. Menciona primero el objeto principal o más cercano en el centro de la imagen. 
+2. Indica su ubicación espacial relativa usando referencias claras (ej. "a tu izquierda", "al frente, a un paso de distancia", "sobre la mesa"). 
+3. Describe de forma muy breve sus características físicas esenciales: color, tamaño aproximado, estado (si está abierto, cerrado, roto, encendido) y marcas o texto visible si es relevante para identificarlo.
+4. Si hay objetos peligrosos o frágiles (como un vaso de vidrio al borde de la mesa, un cuchillo o cables sueltos), adviértelo de inmediato al inicio.
+Sé sumamente conciso, directo y utiliza un tono descriptivo objetivo. Evita suposiciones o lenguaje florido.
+"""
+
+    texto = analizar(
+        data.image,
+        prompt
+    )
+
+    return {
+        "result": texto
+    }
+
+# =====================================================
+# CLIMA
+# =====================================================
+
+@app.post("/weather")
+
+def money(data: ImageRequest):
+
+    prompt = """
+Actúa como un asistente meteorológico para una persona ciega. Analiza la fecha, hora, ubicación actual y la imagen del cielo o entorno que se te proporciona. Genera un reporte ultra-conciso que responda exactamente a lo siguiente:
+1. Estado del cielo y temperatura actual (ej. "Cielo nublado, 18 grados").
+2. Sensación térmica y previsión inmediata para las próximas horas (si hay probabilidad de lluvia, viento fuerte o calor extremo).
+3. Recomendación directa y práctica para el usuario (ej. "Es necesario llevar paraguas", "Usa abrigo pesado", "Ponte gafas de sol y protector").
+Sé directo, no uses introducciones ni saludos, y entrega la información en un máximo de tres frases cortas.
+Menciona la fecha y la hora.
+"""
+
+    texto = analizar(
+        data.image,
+        prompt
+    )
+
+    return {
+        "result": texto
+    }
     
 # =====================================================
 # FRONTEND
