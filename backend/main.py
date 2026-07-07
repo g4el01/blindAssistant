@@ -56,15 +56,26 @@ def analizar(imagen_b64, prompt):
 def environment(data: ImageRequest):
 
     prompt = """
-Actúa como guía para una persona ciega.
+No uses introducciones, saludos ni frases como "En la imagen veo...". Ve directo a los datos críticos usando la estructura de las "3 D": Dirección, Distancia y Descripción.
 
-Describe:
+Sigue estrictamente este orden de prioridad en tu respuesta:
 
-- obstáculos
-- personas
-- puertas
-- escaleras
-- objetos cercanos
+1. ALERTAS INMEDIATAS (A menos de 2 metros): Si hay un peligro inminente en el suelo o a la altura de la cabeza, dilo PRIMERO y con urgencia.
+   - Ejemplos: "Cuidado, escalón hacia abajo a un paso", "Rama baja al frente", "Bache profundo a la derecha".
+
+2. OBSTÁCULOS EN LA RUTA (A más de 2 metros): Describe objetos que bloqueen el paso recto.
+   - Ejemplos: "Contenedor de basura al frente a unos 4 metros", "Poste de luz adelante a la izquierda".
+
+3. DINÁMICA DEL ENTORNO (Gente o vehículos en movimiento):
+   - Ejemplos: "Personas caminando hacia ti", "Un auto saliendo de una cochera a tu derecha".
+
+4. RUTA SUGERIDA: Dale una indicación clara de por dónde continuar si el frente está bloqueado.
+   - Ejemplos: "Camino despejado hacia la izquierda", "La banqueta continúa libre por el centro".
+
+REGLAS CRÍTICAS DE REDACCIÓN:
+- Sé extremadamente breve (máximo 2 o 3 frases cortas). El usuario está caminando y necesita procesar la información rápido.
+- Usa referencias espaciales claras basadas en el cuerpo del usuario: "Al frente", "A tu izquierda", "A tu derecha", "A la altura de la cabeza".
+- No describas estética (colores de edificios, modelos de autos, estética de la ropa). Solo describe lo que afecte el paso.
 
 Máximo 25 palabras.
 
@@ -89,11 +100,28 @@ Prioriza seguridad.
 def ocr(data: ImageRequest):
 
     prompt = """
-Lee todo el texto visible.
+No saludes ni uses introducciones. Ve directo a la información siguiendo estas reglas según el escenario detectado:
 
-Incluye etiquetas.
+[ESCENARIO 1: DOCUMENTOS O LIBROS]
+- Si es una página de texto continuo, transcríbela textualmente respetando párrafos.
+- Omite números de página o encabezados repetitivos que interrumpan la lectura.
 
-Máximo 50 palabras.
+[ESCENARIO 2: EMPAQUES, MEDICAMENTOS O ALIMENTOS]
+- Identifica primero el producto. Ejemplo: "Caja de leche Santa Clara".
+- Busca y lee directamente la información crítica: Fecha de caducidad, instrucciones de uso o advertencias de alérgenos. No leas todo el diseño de marketing a menos que falte lo anterior.
+
+[ESCENARIO 3: LETREROS, CALLES O SEÑALÉTICA]
+- Sé ultra breve. Di el tipo de letrero y lo que dice. Ejemplo: "Letrero de calle: Avenida Juárez" o "Cartel: Baño de hombres".
+
+[ESCENARIO 4: INFORMACIÓN EN PANTALLAS (Cajeros, Monitores, Celulares)]
+- Transcribe solo las opciones disponibles o el mensaje de error en pantalla. Ejemplo: "Pantalla de cajero: Seleccione su operación. Retiro de efectivo, Consulta de saldo...".
+
+[REGLAS GENERALES CRÍTICAS]
+1. Si el texto está incompleto o cortado, avisa: "Texto incompleto por los lados, dice: [texto]".
+2. Si la imagen está borrosa o no hay texto, di únicamente: "Texto no legible" o "No se detecta texto".
+3. Usa un tono neutral, descriptivo y directo. No describas colores ni logotipos a menos que definan la marca del producto.
+
+trata de no usar tantas palabras si es posible.
 """
 
     texto = analizar(
@@ -114,11 +142,16 @@ Máximo 50 palabras.
 def money(data: ImageRequest):
 
     prompt = """
-Identifica billetes y monedas.
+Actúa como un detector de divisas de alta precisión para una persona con discapacidad visual. Tu única tarea es identificar los billetes y monedas visibles en la imagen. La precisión es crítica para la seguridad financiera del usuario.
 
-Responde únicamente:
-
-valor total y moneda.
+Sigue estrictamente estas reglas:
+1. RESPUESTA INMEDIATA Y DIRECTA: Ve directo al grano. NO uses introducciones como "Veo un billete de..." o "En tu mano tienes...". Di la cantidad y la moneda inmediatamente.
+2. FORMATO DE CONTEO:
+   - Si es un solo billete/moneda: Di el valor y la moneda. (Ej: "20 euros" o "100 pesos mexicanos").
+   - Si hay varios billetes/monedas: Di el total acumulado primero y luego el desglose. (Ej: "En total hay 70 dólares. Un billete de 50 y uno de 20").
+3. ADVERTENCIA DE INCERTIDUMBRE: Si el billete está muy doblado, tapado por los dedos, la luz es mala o tienes la más mínima duda de su valor, NO adivines. Di claramente: "No puedo identificar el valor con certeza. Por favor, desdobla el billete o muévelo un poco".
+4. DETECCIÓN DE REVERSO/ANVERSO: Si el billete está por el lado que no muestra el número claramente pero reconoces el diseño, confirma el valor de todos modos.
+5. SI NO ES DINERO: Si en la imagen no hay billetes ni monedas, di textualmente: "No se detecta dinero en la imagen".
 """
 
     texto = analizar(
